@@ -40,10 +40,13 @@ export default function Header() {
           <div className="flex items-center space-x-4">
             {user ? (
               <div className="hidden md:flex items-center gap-3">
-                <span className="text-gray-700 flex items-center gap-2">
+                <Link
+                  href="/profile"
+                  className="text-gray-700 hover:text-gray-900 flex items-center gap-2"
+                >
                   <FiUser />
                   {user.name || user.email}
-                </span>
+                </Link>
                 <button
                   onClick={() => {
                     logout();
@@ -107,22 +110,24 @@ export default function Header() {
             </Link>
             {user ? (
               <>
-                <div className="py-2 border-t flex items-center justify-between">
-                  <span className="text-gray-700">
-                    {user.name || user.email}
-                  </span>
-                  <button
-                    onClick={() => {
-                      logout();
-                      setIsMenuOpen(false);
-                      router.push("/");
-                    }}
-                    className="text-red-600 flex items-center gap-2"
-                  >
-                    <FiLogOut />
-                    Sign Out
-                  </button>
-                </div>
+                <Link
+                  href="/profile"
+                  className="block py-2 text-gray-700 hover:text-gray-900"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  {user.name || user.email}
+                </Link>
+                <button
+                  onClick={() => {
+                    logout();
+                    setIsMenuOpen(false);
+                    router.push("/");
+                  }}
+                  className="block py-2 text-red-600 flex items-center gap-2"
+                >
+                  <FiLogOut />
+                  Sign Out
+                </button>
               </>
             ) : (
               <Link

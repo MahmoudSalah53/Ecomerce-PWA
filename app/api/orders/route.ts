@@ -61,8 +61,28 @@ export async function POST(request: Request) {
   }
 }
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
+    const { searchParams } = new URL(request.url);
+    const userId = searchParams.get("userId");
+
+    if (userId) {
+      // Get orders for a specific user
+      const orders = await prisma.order.findMany({
+        where: { userId },
+        include: {
+          orderItems: {
+            include: {
+              product: true,
+            },
+          },
+        },
+        orderBy: { createdAt: "desc" },
+      });
+      return NextResponse.json(orders);
+    }
+
+    // Get all orders (admin functionality)
     const orders = await prisma.order.findMany({
       include: {
         orderItems: {
