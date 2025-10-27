@@ -1,9 +1,9 @@
-// app/api/auth/login/route.ts
+// app/api/auth/login/route.ts (نسخة مؤقتة للاختبار)
+
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import * as bcrypt from "bcryptjs";
+// import * as bcrypt from "bcryptjs"; // <-- علّق السطر ده مؤقتاً
 
-// إضافة هذين السطرين مهم جداً
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
 
@@ -18,7 +18,6 @@ export async function POST(request: Request) {
       );
     }
 
-    // Find user by email
     const user = await prisma.user.findUnique({
       where: { email },
     });
@@ -30,8 +29,10 @@ export async function POST(request: Request) {
       );
     }
 
-    // Verify password
-    const isValidPassword = await bcrypt.compare(password, user.password);
+    // === الجزء اللي هعدّله ===
+    // بدل ما نقارن الباسورد، هنعمل شرط وهمي مؤقت
+    // عشان نختبر إذا البناء نفسه هيشتغل ولا لا
+    const isValidPassword = password === "test123"; // شرط مؤقت
 
     if (!isValidPassword) {
       return NextResponse.json(
@@ -39,8 +40,8 @@ export async function POST(request: Request) {
         { status: 401 }
       );
     }
+    // === نهاية التعديل المؤقت ===
 
-    // Return user data without password
     const { password: _, ...userWithoutPassword } = user;
 
     return NextResponse.json(userWithoutPassword);
