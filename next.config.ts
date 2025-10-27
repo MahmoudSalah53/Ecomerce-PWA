@@ -17,7 +17,10 @@ const nextConfig: NextConfig = {
   },
   
   // Force webpack instead of Turbopack for PWA compatibility
-  webpack: (config) => {
+  webpack: (config, { isServer }) => {
+    if (isServer) {
+      config.externals.push('@prisma/client');
+    }
     return config;
   },
   
