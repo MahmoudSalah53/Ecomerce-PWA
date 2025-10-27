@@ -6,14 +6,21 @@ const withPWA = withPWAInit({
   register: true,
   skipWaiting: true,
   disable: process.env.NODE_ENV === "development",
-  // ... rest of your PWA config
 });
 
 const nextConfig: NextConfig = {
+  // منع تنفيذ API routes وقت البناء
+  experimental: {
+    serverActions: {
+      bodySizeLimit: '2mb',
+    },
+  },
+  
   // Force webpack instead of Turbopack for PWA compatibility
   webpack: (config) => {
     return config;
   },
+  
   images: {
     remotePatterns: [
       {
