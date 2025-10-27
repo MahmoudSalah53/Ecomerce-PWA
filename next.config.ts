@@ -9,19 +9,10 @@ const withPWA = withPWAInit({
 });
 
 const nextConfig: NextConfig = {
-  // منع تنفيذ API routes وقت البناء
   experimental: {
     serverActions: {
       bodySizeLimit: '2mb',
     },
-  },
-  
-  // Force webpack instead of Turbopack for PWA compatibility
-  webpack: (config, { isServer }) => {
-    if (isServer) {
-      config.externals.push('@prisma/client');
-    }
-    return config;
   },
   
   images: {

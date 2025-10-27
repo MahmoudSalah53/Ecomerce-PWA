@@ -1,8 +1,15 @@
+// app/api/orders/route.ts
+
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import { getPrismaClient } from "@/lib/prisma"; // ✅ نفس الطريقة الصحيحة من signup
+
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
 
 export async function POST(request: Request) {
   try {
+    const prisma = getPrismaClient(); // ✅ استدعاء صحيح داخل الفنكشن
+
     const body = await request.json();
     const {
       userId,
@@ -19,7 +26,14 @@ export async function POST(request: Request) {
       items,
     } = body;
 
-    // Create order
+    if (!email || !firstName || !lastName || !address || !city || !zipCode || !phone || !total || !items) {
+      return NextResponse.json(
+        { error: "Missing required order fields" },
+        { status: 400 }
+      );
+    }
+
+    // ✅ إنشاء الطلب الجديد
     const order = await prisma.order.create({
       data: {
         userId: userId || undefined,
@@ -51,7 +65,7 @@ export async function POST(request: Request) {
       },
     });
 
-    return NextResponse.json(order);
+    return NextResponse.json(order, { status: 201 });
   } catch (error) {
     console.error("Error creating order:", error);
     return NextResponse.json(
@@ -63,11 +77,13 @@ export async function POST(request: Request) {
 
 export async function GET(request: Request) {
   try {
+    const prisma = getPrismaClient(); // ✅ لازم يكون هنا كمان
+
     const { searchParams } = new URL(request.url);
     const userId = searchParams.get("userId");
 
     if (userId) {
-      // Get orders for a specific user
+      // ✅ إحضار الطلبات الخاصة بمستخدم معين
       const orders = await prisma.order.findMany({
         where: { userId },
         include: {
@@ -82,7 +98,7 @@ export async function GET(request: Request) {
       return NextResponse.json(orders);
     }
 
-    // Get all orders (admin functionality)
+    // ✅ إحضار كل الطلبات (لـ admin)
     const orders = await prisma.order.findMany({
       include: {
         orderItems: {
@@ -93,6 +109,7 @@ export async function GET(request: Request) {
       },
       orderBy: { createdAt: "desc" },
     });
+
     return NextResponse.json(orders);
   } catch (error) {
     console.error("Error fetching orders:", error);
