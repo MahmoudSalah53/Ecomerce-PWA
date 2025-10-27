@@ -1,3 +1,4 @@
+// app/api/auth/login/route.ts
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import * as bcrypt from "bcryptjs";
@@ -13,7 +14,7 @@ export async function POST(request: Request) {
       );
     }
 
-    // Find user
+    // Find user by email
     const user = await prisma.user.findUnique({
       where: { email },
     });
@@ -35,7 +36,7 @@ export async function POST(request: Request) {
       );
     }
 
-    // Return user without password
+    // Return user data without password
     const { password: _, ...userWithoutPassword } = user;
 
     return NextResponse.json(userWithoutPassword);
